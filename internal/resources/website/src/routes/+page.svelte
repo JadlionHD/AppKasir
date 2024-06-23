@@ -11,7 +11,7 @@
   let username: string;
   let password: string;
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     // fetch("http://localhost:80/api/login", {
     //   method: "POST",
     //   body: JSON.stringify({
@@ -24,10 +24,12 @@
     //   }
     // });
 
-    axios.post("http://localhost:80/api/login", {
+    const data = await axios.post("http://localhost:80/api/login", {
       username,
       password
     });
+
+    console.log(data);
   };
 </script>
 

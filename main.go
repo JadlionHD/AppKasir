@@ -4,23 +4,34 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/JadlionHD/AppKasir/internal/controllers"
+	"github.com/JadlionHD/AppKasir/internal/middleware"
+	"github.com/JadlionHD/AppKasir/internal/models"
 	"github.com/JadlionHD/AppKasir/internal/resources"
-	"github.com/JadlionHD/AppKasir/internal/routes"
+	"github.com/gin-gonic/gin"
 )
 
+func init() {
+	models.Database()
+
+}
+
 func main() {
-
 	assets, _ := resources.Assets()
+	gin.SetMode(gin.ReleaseMode)
+	router := gin.Default()
 
-	fs := http.FileServer(http.FS(assets))
-	http.Handle("/", fs)
+	router.NoRoute(gin.WrapH(http.FileServer(http.FS(assets))))
 
-	http.HandleFunc("/api/test", func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("%s", "Hello world")
+	router.GET("/api/ping", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, gin.H{
+			"message": "pong",
+		})
 	})
-	http.HandleFunc("/api/login", routes.HandleLogin)
 
-	log.Println("Running on http://localhost:80")
-	http.ListenAndServe("localhost:80", nil)
+	router.POST("/api/login", controllers.PostLoginController)
+	router.GET("/test-validate", middleware.ValidateMiddleware, controllers.Validate)
+	log.Printf("Running on http://localhost:80")
+	router.Run("localhost:80")
 
 }
