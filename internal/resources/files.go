@@ -2,12 +2,14 @@ package resources
 
 import (
 	"embed"
-	"io/fs"
+
+	"github.com/gin-contrib/static"
 )
 
 //go:embed all:website/build
 var assets embed.FS
 
-func Assets() (fs.FS, error) {
-	return fs.Sub(assets, "website/build")
+func Assets() static.ServeFileSystem {
+	// return fs.Sub(assets, "website/build")
+	return static.EmbedFolder(assets, "website/build")
 }

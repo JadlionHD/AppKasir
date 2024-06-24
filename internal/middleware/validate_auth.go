@@ -22,19 +22,20 @@ func ValidateMiddleware(c *gin.Context) {
 
 	token, err := jwt.Parse(tokenStr, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", t.Header["alg"])
+			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
 		}
-
 		return constants.JWT_SIGNATURE_KEY, nil
 	})
 
 	if err != nil {
 		c.AbortWithStatus(http.StatusUnauthorized)
+		return
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok {
 		if float64(time.Now().Unix()) > claims["exp"].(float64) {
 			c.AbortWithStatus(http.StatusUnauthorized)
+			return
 		}
 
 		var user schemas.UserSchema
@@ -42,6 +43,7 @@ func ValidateMiddleware(c *gin.Context) {
 
 		if user.ID == 0 {
 			c.AbortWithStatus(http.StatusUnauthorized)
+			return
 		}
 
 		c.Set("user", gin.H{
