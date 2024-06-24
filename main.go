@@ -14,26 +14,27 @@ import (
 
 func init() {
 	models.Database()
-
+	resources.GetAssets()
 }
 
 func main() {
-	assets := resources.Assets()
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 
-	router.GET("/api/ping", func(ctx *gin.Context) {
+	api := router.Group("/api")
+	api.GET("/ping", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{
 			"message": "pong",
 		})
 	})
+	api.POST("/login", controllers.PostLoginController)
+	router.GET("/validate", middleware.ValidateMiddleware, controllers.Validate)
 
-	router.POST("/api/login", controllers.PostLoginController)
-	router.GET("/test-validate", middleware.ValidateMiddleware, controllers.Validate)
+	router.Use(static.Serve("/", resources.StaticAssets))
+	router.SetHTMLTemplate(resources.Tmpl)
 
-	router.Use(static.Serve("/", assets))
-	router.NoRoute(func(c *gin.Context) {
-		c.File("./internal/resources/website/build/index.html")
+	router.NoRoute(func(c *gin.Context) { // fallback
+		c.HTML(http.StatusOK, "index.html", gin.H{})
 	})
 
 	log.Printf("Running on http://localhost:80")
