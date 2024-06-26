@@ -37,7 +37,7 @@
   <div class="m-auto">
     <Card.Root class="w-[350px]">
       <Card.Header>
-        <Card.Title>Login</Card.Title>
+        <Card.Title class="text-2xl">Login</Card.Title>
         <Card.Description
           >Untuk memasuki AppKasir, anda perlu login terlebih dahulu.</Card.Description
         >
@@ -62,7 +62,7 @@
         </div>
       </Card.Content>
       <Card.Footer class="flex justify-between">
-        <Button on:click={handleLogin}>Masuk</Button>
+        <Button class="w-full" type="submit" on:click={handleLogin}>Masuk</Button>
       </Card.Footer>
     </Card.Root>
   </div>

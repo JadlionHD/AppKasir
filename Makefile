@@ -19,9 +19,24 @@ all: clean build_all install
 build:
 	${GO_EXEC} build ${LDFLAGS} -o ./out/${BINARY}
 
+dev: build_frontend
+	$(shell rm -rf ${ROOT_DIR}/out/${BINARY}-dev.exe)
+	${GO_EXEC} build ${LDFLAGS} -o ./out/${BINARY}-dev.exe
+	./out/${BINARY}-dev.exe
+
+dev-go:
+	$(shell rm -rf ${ROOT_DIR}/out/${BINARY}-dev.exe)
+	${GO_EXEC} build ${LDFLAGS} -o ./out/${BINARY}-dev.exe
+	./out/${BINARY}-dev.exe
+
 build_all:
 	$(foreach GOOS, $(PLATFORMS),\
-	$(foreach GOARCH, $(ARCHITECTURES), $(shell export GOOS=$(GOOS); export GOARCH=$(GOARCH); export CGO_ENABLED=1; ${GO_EXEC} build -o ./out/$(BINARY)-$(GOOS)-$(GOARCH))))
+	$(foreach GOARCH, $(ARCHITECTURES), $(shell export GOOS=$(GOOS); export GOARCH=$(GOARCH); export CGO_ENABLED=1; ${GO_EXEC} build -o ./out/$(BINARY)-${VERSION}-$(GOOS)-$(GOARCH))))
+
+build_frontend:
+	cd internal/resources/website && pnpm run build
+
+setup: build_frontend all
 
 install:
 	${GO_EXEC} install ${LDFLAGS}

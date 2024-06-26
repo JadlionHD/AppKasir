@@ -28,6 +28,8 @@
 	"type": "module",
 	"dependencies": {
 		"@internationalized/date": "^3.5.4",
+		"@unovis/svelte": "^1.4.1",
+		"@unovis/ts": "^1.4.1",
 		"axios": "^1.7.2",
 		"bits-ui": "^0.21.10",
 		"clsx": "^2.1.1",
